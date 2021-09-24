@@ -4,6 +4,7 @@
   "description": "mini project",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
