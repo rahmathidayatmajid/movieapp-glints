@@ -1,5 +1,5 @@
 const Joi = require('joi')
-    , { Movie, Character, MovieCharacter } = require('../models')
+    , { Movie, Character, MovieCharacter, Review, User } = require('../models')
 
 module.exports = {
     postMovie: async (req, res) => {
@@ -7,37 +7,14 @@ module.exports = {
         const file = req.files;
 
         try {
-            const schema = Joi.object({
-                title: Joi.string().required(),
-                storyline: Joi.string().required(),
-                poster: Joi.string().required,
-                trailer: Joi.string().required()
-            });
-
-            const { error } = schema.validate(
-                {
-                    ...req.body,
-                    poster: file.poster ? file.poster[0].path : null,
-                    trailer: file.trailer ? file.trailer[0].path : null
-                },
-                { abortEarly: false }
-            );
-
-            if(error) {
-                return res.status(400).send({
-                    status: 'failed',
-                    message: error.details[0].message,
-                    error: error.details.map(detail => detail.message)
-                });
-            }
-
-            const movies = await Movie.create({
+           const movies = await Movie.create({
                 title: body.title,
                 storyline: body.storyline,
-                rating: body.rating,
-                poster: file.poster[0].path,
-                trailer: file.trailer[0].path
+                // rating : Review['rating']
+                // poster: file.path,
+                // trailer: file.path
             });
+            console.log("🚀 ~ file: moviesController.js ~ line 42 ~ postMovie: ~ movies", movies)
 
             if (!movies) {
                 res.status(400).json({
@@ -45,6 +22,11 @@ module.exports = {
                     message: 'Failed to add movies, please try again'
                 });
             }
+            return res.status(200).json({
+                status: 'Success',
+                message: 'Succesfully insert data',
+                data: movies
+            })
         } catch (error) {
             res.status(500).json({
               status: 'error',
@@ -53,5 +35,34 @@ module.exports = {
               }
             });
         }
+    },
+    getMovie:  async (req, res) => {        
+        try {
+            const movies = await Movie.findAll({
+                attributes: { exclude: ['createdAt', 'updatedAt', 'poster', 'trailer'] },
+                include: [
+                    {
+                        model: Review, 
+                        attributes: ['rating'],
+                        // include: [
+                        //     {
+                        //         model: User,
+                        //         attributes: { exclude: ['createdAt', 'updatedAt', 'isAdmin', 'profilePict' ] }
+                        //     }
+                        // ]
+                    }
+                    
+                ]
+            })
+            res.send(movies)
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+              status: 'error',
+              error: {
+                message: 'Internal Server Error',
+              },
+            });
+          }
     }
 }
