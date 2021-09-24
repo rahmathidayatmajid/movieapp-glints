@@ -32,12 +32,13 @@ module.exports = {
                 const createUser = await User.create({
                     fullName: body.fullName,
                     email: body.email,
-                    password: hash
+                    password: hash,
+                    isAdmin: false
                 })
 
                 return res.status(200).json({
                     status: "Success",
-                    message: "Register successfully"
+                    message: "Register successfully",
                 })
             })
 
