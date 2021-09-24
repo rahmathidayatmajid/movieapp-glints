@@ -9,7 +9,6 @@ module.exports = {
         try {
             const schema = Joi.object({
                 title: Joi.string().required(),
-                rating: Joi.number().required(),
                 storyline: Joi.string().required(),
                 poster: Joi.string().required,
                 trailer: Joi.string().required()
@@ -54,35 +53,5 @@ module.exports = {
               }
             });
         }
-    },
-    getMovie:  async (req, res) => {
-        try {
-            const movies = await Movie.findAll({
-                attributes: { exclude: ['createdAt', 'updatedAt', 'poster', 'trailer'] },
-                include: [
-                    {
-                        model: MovieCharacter, 
-                        attributes: ['movieId', 'characterId'],
-                        include: [
-                            {
-                                model: Character,
-                                as: "actor",
-                                attributes: ['name']
-                            }
-                        ]
-                    }
-                    
-                ]
-            })
-            res.send(movies)
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({
-              status: 'error',
-              error: {
-                message: 'Internal Server Error',
-              },
-            });
-          }
     }
 }
