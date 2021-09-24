@@ -1,7 +1,7 @@
 {
     "development": {
         "username": "postgres",
-        "password": "111215",
+        "password": "null",
         "database": "db_miniproject",
         "host": "127.0.0.1",
         "dialect": "postgres"
