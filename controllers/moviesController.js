@@ -1,5 +1,5 @@
-const Joi = require('joi')
-    , { Movie, Character, MovieCharacter, Review, User } = require('../models')
+const { Movie, Character, MovieCharacter, Review, User } = require('../models')
+    , { Op } = require('sequelize')
 
 module.exports = {
     postMovie: async (req, res) => {
@@ -10,7 +10,6 @@ module.exports = {
            const movies = await Movie.create({
                 title: body.title,
                 storyline: body.storyline,
-                // rating : Review['rating']
                 // poster: file.path,
                 // trailer: file.path
             });
@@ -36,25 +35,40 @@ module.exports = {
             });
         }
     },
-    getMovie:  async (req, res) => {        
+    getMovie:  async (req, res) => {       
+        const { id: movieId } = req.params
+        console.log("🚀 ~ file: moviesController.js ~ line 40 ~ getMovie: ~ movieId", movieId)
         try {
-            const movies = await Movie.findAll({
+            const movies = await Movie.findOne({
+                where: {
+                    id: { [Op.eq]: movieId } //movie id
+                },
                 attributes: { exclude: ['createdAt', 'updatedAt', 'poster', 'trailer'] },
                 include: [
                     {
                         model: Review, 
-                        attributes: ['rating'],
-                        // include: [
-                        //     {
-                        //         model: User,
-                        //         attributes: { exclude: ['createdAt', 'updatedAt', 'isAdmin', 'profilePict' ] }
-                        //     }
-                        // ]
+                        // where: {
+                        //     movieId: id
+                        // },
+                        required: true,
+                        attributes: ['rating']
                     }
                     
                 ]
             })
-            res.send(movies)
+            console.log("🚀 ~ file: moviesController.js ~ line 58 ~ getMovie: ~ movies", movies)
+            //const reviews = get(movie, 'review', [])
+           let result = []
+
+           for (let i = 0; i< movies.length; i++){
+               const movieReview = movies[i].Reviews
+               for (let j = 0; j< movieReview.length;j++){
+                   result.push(movieReview[j].rating)
+               }
+           }
+           let sum = result.reduce((a,b) => a+b) 
+           let rating = sum / result.length
+           res.status(200).json({data: rating})
         } catch (error) {
             console.log(error);
             res.status(500).json({
@@ -65,4 +79,6 @@ module.exports = {
             });
           }
     }
+
+    //get movies by category, by Id
 }

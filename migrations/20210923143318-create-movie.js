@@ -23,6 +23,18 @@ module.exports = {
       trailer: {
         type: Sequelize.STRING
       },
+      release_date: {
+        type: Sequelize.STRING
+      },
+      budget: {
+        type: Sequelize.STRING
+      },
+      director: {
+        type: Sequelize.STRING
+      },
+      featured_song: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
