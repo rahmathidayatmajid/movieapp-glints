@@ -1,6 +1,6 @@
 'use strict';
 const {
-  Model
+    Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Movie extends Model {
@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   Movie.init({
     title: DataTypes.STRING,
-    rating: DataTypes.INTEGER,
+    rating: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     synopsis: DataTypes.STRING,
     poster: DataTypes.STRING,
     trailer: DataTypes.STRING,

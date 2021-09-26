@@ -2,12 +2,12 @@ const { Movie, Character, MovieCharacter, Review, User, MovieCategory, Category 
     , { Op } = require('sequelize')
 
 module.exports = {
-    postMovie: async (req, res) => {
+    postMovie: async(req, res) => {
         const body = req.body;
         const file = req.files;
 
         try {
-           const movies = await Movie.create({
+            const movies = await Movie.create({
                 title: body.title,
                 synopsis: body.synopsis,
                 release_date: body.release_date,
@@ -59,8 +59,9 @@ module.exports = {
                    }
                ]
            });
+           console.log("🚀 ~ file: moviesController.js ~ line 62 ~ searchMovie: ~ movies", movies)
 
-           if (!movies) {
+           if (movies != []) {
                return res.status(404).json({
                    status: 'failed',
                    message: 'There is no movie found'
@@ -83,10 +84,15 @@ module.exports = {
         }
     },
 
-    getMovie:  async (req, res) => {   
+    getMovie:  async (req, res) => {
+        const limit = 3;
+        const page = req.params.page;
+        const offset = limit * (page-1); 
         try {
             const movies = await Movie.findAll({
-                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                limit : limit,
+                offset : offset,
+                attributes: { exclude: ['createdAt', 'updatedAt', 'count'] },
                 include: [
                     {
                     model: MovieCategory,
@@ -104,7 +110,8 @@ module.exports = {
                         attributes: ['name']
                     }
                 }
-            ]
+                ],
+                order : [['id', 'ASC']]
             });
             res.status(200).json({
                 status: 'Success',
@@ -112,16 +119,14 @@ module.exports = {
                 data: {
                     movies
                 }
-            });
-        } catch (error) {
-            console.log("🚀 ~ file: moviesController.js ~ line 45 ~ getMovie: ~ error", error)
+            });    
+        } catch(error) {
             res.status(500).json({
                 status: 'error',
                 message: 'Internal Server Error'
-              })
+            });
         }
-    },
-        
+    },        
     getMovieById: async (req, res) => {
         const { id } = req.params;
 
@@ -158,8 +163,6 @@ module.exports = {
                 message: 'Internal Server Error'
           })
         }
-    },
-
-
+    }
     //get movies by category, by Id
 }
