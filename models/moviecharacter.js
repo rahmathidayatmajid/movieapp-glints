@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-        MovieCharacter.belongsTo(models.Movie, { foreignKey: "movieId", as: "movies", sourceKey: "id" })
-        MovieCharacter.belongsTo(models.Character, { foreignKey: "characterId", as: "actor" ,sourceKey: "id" })
+        MovieCharacter.belongsTo(models.Movie, { foreignKey: "movieId", sourceKey: "id" })
+        MovieCharacter.belongsTo(models.Character, { foreignKey: "characterId", sourceKey: "id" })
     }
   };
   MovieCharacter.init({

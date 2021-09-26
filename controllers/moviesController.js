@@ -1,4 +1,4 @@
-const { Movie, Character, MovieCharacter, Review, User } = require('../models')
+const { Movie, Character, MovieCharacter, Review, User, MovieCategory, Category } = require('../models')
     , { Op } = require('sequelize')
 
 module.exports = {
@@ -9,9 +9,11 @@ module.exports = {
         try {
            const movies = await Movie.create({
                 title: body.title,
-                storyline: body.storyline,
-                // poster: file.path,
-                // trailer: file.path
+                synopsis: body.synopsis,
+                release_date: body.release_date,
+                budget: body.budget,
+                director: body.director,
+                featured_song: body.featured_song
             });
             console.log("🚀 ~ file: moviesController.js ~ line 42 ~ postMovie: ~ movies", movies)
 
@@ -27,58 +29,137 @@ module.exports = {
                 data: movies
             })
         } catch (error) {
+            console.log("🚀 ~ file: moviesController.js ~ line 34 ~ postMovie: ~ error", error)
+            
             res.status(500).json({
               status: 'error',
-              error: {
-                message: 'Internal Server Error',
-              }
+              message: 'Internal Server Error'
             });
         }
     },
-    getMovie:  async (req, res) => {       
-        const { id: movieId } = req.params
-        console.log("🚀 ~ file: moviesController.js ~ line 40 ~ getMovie: ~ movieId", movieId)
+    searchMovie:  async (req, res) => {   
+        let { q_name } = req.params;   
+
         try {
-            const movies = await Movie.findOne({
-                where: {
-                    id: { [Op.eq]: movieId } //movie id
-                },
-                attributes: { exclude: ['createdAt', 'updatedAt', 'poster', 'trailer'] },
+           const movies = await Movie.findAll({
+               where: {
+                 title: {
+                     [Op.iLike]: '%'+ q_name + '%'
+                 }  
+               },
+               attributes: { exclude: ['createdAt', 'updatedAt'] },
+               include: [
+                   {
+                       model: MovieCharacter,
+                       attributes: ['characterId'],
+                       include: {
+                           model: Character,
+                           attributes: ['name']
+                       }
+                   }
+               ]
+           });
+
+           if (!movies) {
+               return res.status(404).json({
+                   status: 'failed',
+                   message: 'There is no movie found'
+               })
+           }
+           
+           res.status(200).json({
+               status: 'Success',
+               message: 'Movies loaded successfully',
+               data: {
+                   movies
+               }
+           });
+        } catch (error) {
+        console.log("🚀 ~ file: moviesController.js ~ line 45 ~ getMovie: ~ error", error)
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+            })
+        }
+    },
+
+    getMovie:  async (req, res) => {   
+        try {
+            const movies = await Movie.findAll({
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
                 include: [
                     {
-                        model: Review, 
-                        // where: {
-                        //     movieId: id
-                        // },
-                        required: true,
-                        attributes: ['rating']
+                    model: MovieCategory,
+                    attributes: ['categoryId'],
+                    include:{
+                            model: Category,
+                            attributes: ['name']
+                        } 
+                },
+                {
+                    model: MovieCharacter,
+                    attributes: ['characterId'],
+                    include: {
+                        model: Character,
+                        attributes: ['name']
                     }
-                    
-                ]
-            })
-            console.log("🚀 ~ file: moviesController.js ~ line 58 ~ getMovie: ~ movies", movies)
-            //const reviews = get(movie, 'review', [])
-           let result = []
-
-           for (let i = 0; i< movies.length; i++){
-               const movieReview = movies[i].Reviews
-               for (let j = 0; j< movieReview.length;j++){
-                   result.push(movieReview[j].rating)
-               }
-           }
-           let sum = result.reduce((a,b) => a+b) 
-           let rating = sum / result.length
-           res.status(200).json({data: rating})
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({
-              status: 'error',
-              error: {
-                message: 'Internal Server Error',
-              },
+                }
+            ]
             });
-          }
-    }
+            res.status(200).json({
+                status: 'Success',
+                message: 'Movies loaded successfully',
+                data: {
+                    movies
+                }
+            });
+        } catch (error) {
+            console.log("🚀 ~ file: moviesController.js ~ line 45 ~ getMovie: ~ error", error)
+            res.status(500).json({
+                status: 'error',
+                message: 'Internal Server Error'
+              })
+        }
+    },
+        
+    getMovieById: async (req, res) => {
+        const { id } = req.params;
+
+        try {
+            const movie = await Movie.findOne({
+                where: { id },
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                include: {
+                    model: MovieCharacter,
+                    attributes: ['characterId'],
+                    include: {
+                        model: Character,
+                        attributes: ['name']
+                    }
+                }
+            });
+
+            if (!movie) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: `No movie found with id ${id}`
+                });
+            }
+
+            res.status(200).json({
+                status: 'Success',
+                message: 'Movies loaded successfully',
+                data: { movie }
+            });
+        } catch (error) {
+        console.log("🚀 ~ file: moviesController.js ~ line 124 ~ getMovieById: ~ error", error)
+            res.status(500).json({
+                status: 'error',
+                message: 'Internal Server Error'
+          })
+        }
+    },
+
 
     //get movies by category, by Id
 }

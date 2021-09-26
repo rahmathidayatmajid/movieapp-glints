@@ -2,11 +2,19 @@ const { Category } = require('../models')
 
 module.exports = {
     postGenre : async (req, res) => {
-        const nameGenre = req.body.name;
+        const name = req.body.name;
 
         try {
+            const check = await Category.findOne({ where: { name } });
+            
+            if (check) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'Already added to category'
+                });
+            }
             const genre = await Category.create({
-                name: nameGenre
+                name
             });
 
             if(!genre) {
