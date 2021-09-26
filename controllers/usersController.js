@@ -2,6 +2,9 @@ const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const joi = require('joi')
+const Review = require('../models')
+
+
 require('dotenv').config()
 
 module.exports = {
@@ -51,9 +54,10 @@ module.exports = {
     },
     editUserBasic: async(req, res) => {
         const body = req.body
-        const id = req.params.id
+        const user = req.user
+        const file = req.file
         try {
-            const findUser = await User.findOne({ where: { id: id } })
+            const findUser = await User.findOne({ where: { id: user.id } })
             if (!findUser) {
                 return res.status(400).json({
                     status: "failed",
@@ -64,11 +68,11 @@ module.exports = {
                 email: body.email,
                 password: body.password,
                 fullName: body.fullName,
-                profilePict: body.profilePict,
+                profilePict: file.path,
                 isAdmin: false
             }, {
                 where: {
-                    id: id
+                    id: user.id
                 }
             })
 
@@ -134,14 +138,24 @@ module.exports = {
     },
     getOneUser: async(req, res) => {
         const user = req.user
+        const id = req.params.id
         try {
             const data = await User.findOne({
                 where: {
-                    id: user.id
-                }
+                    id: id
+                },
+                include: [{
+                    model: Review,
+                    where: {
+                        userId: id
+                    },
+                    attributes: ["rating", "comment"]
+                }]
             })
 
-            res.send(data)
+            if (!user)
+
+                res.send(data)
 
         } catch (error) {
             res.status(500).json({
