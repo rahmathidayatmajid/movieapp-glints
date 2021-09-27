@@ -25,7 +25,7 @@ module.exports = {
             }
             return res.status(200).json({
                 status: 'Success',
-                message: 'Succesfully insert data',
+                message: 'Succesfully insert movie',
                 data: movies
             })
         } catch (error) {
@@ -61,7 +61,7 @@ module.exports = {
            });
            console.log("🚀 ~ file: moviesController.js ~ line 62 ~ searchMovie: ~ movies", movies)
 
-           if (movies != []) {
+           if (movies == []) {
                return res.status(404).json({
                    status: 'failed',
                    message: 'There is no movie found'
@@ -101,15 +101,7 @@ module.exports = {
                             model: Category,
                             attributes: ['name']
                         } 
-                },
-                {
-                    model: MovieCharacter,
-                    attributes: ['characterId'],
-                    include: {
-                        model: Character,
-                        attributes: ['name']
                     }
-                }
                 ],
                 order : [['id', 'ASC']]
             });
@@ -249,5 +241,4 @@ module.exports = {
         })
         }
     }
-    //get movies by category, by Id
 }

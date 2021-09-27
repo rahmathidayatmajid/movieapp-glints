@@ -78,5 +78,10 @@ module.exports = {
                 message: 'Internal server error'
             })
         }
-    }
+    },
+    /**
+     * get movie by categories
+     * jadi get movie with title and genre nya
+     * kalau /1 dapat semua movies genre action => contoh
+     */
 }

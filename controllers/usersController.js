@@ -14,13 +14,15 @@ module.exports = {
             const schema = joi.object({
                 fullName: joi.string().required(),
                 email: joi.string().required(),
-                password: joi.string().required()
+                password: joi.string().required(),
+                isAdmin: joi.string()
             })
 
             const { error } = schema.validate({
                 fullName: body.fullName,
                 email: body.email,
-                password: body.password
+                password: body.password,
+                isAdmin: body.isAdmin
             }, { abortEarly: false })
 
             const checkEmail = await User.findOne({ where: { email: body.email } })
@@ -36,7 +38,7 @@ module.exports = {
                     fullName: body.fullName,
                     email: body.email,
                     password: hash,
-                    isAdmin: false
+                    isAdmin: body.isAdmin
                 })
 
                 return res.status(200).json({
