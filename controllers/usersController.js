@@ -23,6 +23,13 @@ module.exports = {
                 password: body.password
             }, { abortEarly: false })
 
+            if (error) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Please input username or password"
+                })
+            }
+
             const checkEmail = await User.findOne({ where: { email: body.email } })
             if (checkEmail) {
                 return res.status(400).json({
@@ -153,9 +160,18 @@ module.exports = {
                 }]
             })
 
-            if (!user)
+            if (!data) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Cannot find user"
+                })
+            }
 
-                res.send(data)
+            return res.status(200).json({
+                status: "success",
+                message: "success retrieved data",
+                data: data
+            })
 
         } catch (error) {
             res.status(500).json({
