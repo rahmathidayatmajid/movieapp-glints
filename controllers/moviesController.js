@@ -93,7 +93,6 @@ module.exports = {
             })
         }
     },
-
     getAllMovie: async(req, res) => {
         const limit = 3;
         const page = req.params.page;
@@ -166,9 +165,6 @@ module.exports = {
             })
         }
     },
-    //get movies by category, by Id
-
-
     updateMovie: async(req, res) => {
         const { id } = req.params;
         const { title, synopsis, release_date, budget, director, featured_song } = req.body
@@ -221,7 +217,6 @@ module.exports = {
             })
         }
     },
-
     deleteMovie: async(req, res) => {
         const { id } = req.params;
 
