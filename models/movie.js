@@ -1,6 +1,6 @@
 'use strict';
 const {
-    Model
+  Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Movie extends Model {
@@ -14,12 +14,14 @@ module.exports = (sequelize, DataTypes) => {
       Movie.hasMany(models.MovieCharacter, { foreignKey: "movieId", sourceKey: 'id' } );
       Movie.hasMany(models.MovieCategory, { foreignKey: "movieId", sourceKey: 'id' } );
       Movie.hasMany(models.Review, { foreignKey: 'movieId', sourceKey: 'id' });
+      Movie.hasMany(models.Watchlist, { foreignKey: 'movieId', sourceKey: 'id'})
     }
   };
   Movie.init({
     title: DataTypes.STRING,
     rating: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       defaultValue: 0
     },
     synopsis: DataTypes.STRING,

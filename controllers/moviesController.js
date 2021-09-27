@@ -84,7 +84,7 @@ module.exports = {
         }
     },
 
-    getMovie:  async (req, res) => {
+    getAllMovie:  async (req, res) => {
         const limit = 3;
         const page = req.params.page;
         const offset = limit * (page-1); 
@@ -162,6 +162,91 @@ module.exports = {
                 status: 'error',
                 message: 'Internal Server Error'
           })
+        }
+    },
+
+    updateMovie: async (req, res) => {
+        const { id } = req.params;
+        const { title, synopsis, release_date, budget, director, featured_song } = req.body
+
+        try {
+            const updateMovie = await Movie.update({
+                title, synopsis, release_date, budget, director, featured_song,
+            }, {
+                where: { id }
+            });
+
+            if (!updateMovie) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'Failed to update movie, please try again'
+                });
+            }
+
+            const response = await Movie.findOne({
+                where: { id },
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                include: [
+                    {
+                        model: MovieCharacter,
+                        attributes: ['characterId'],
+                        include: {
+                            model: Character,
+                            attributes: ['name']
+                        },
+                        order: [['name', 'ASC']]
+                    }
+                ]
+            });
+
+            res.status(200).json({
+                status: 'Success',
+                message: 'Movies update successfully',
+                data: response
+            })
+        } catch (error) {
+        console.log("🚀 ~ file: moviesController.js ~ line 175 ~ putMovie: ~ error", error)
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+            })
+        }
+    },
+
+    deleteMovie: async (req, res) => {
+        const { id } = req.params;
+
+        try {
+            const movie = await Movie.findOne({
+                where: { id }
+            });
+
+            if (!movie) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: `No movie with id ${id} found`
+                })
+            }
+
+            const remove = await Movie.destroy({ where: { id } });
+
+            if (!remove) {
+                res.status(400).json({
+                    status: 'failed',
+                    message: 'Failed to delete the movie'
+                })
+            }
+
+            res.status(200).json({
+                status: 'Success',
+                message: 'Success delete movie'
+            })
+        } catch (error) {
+        console.log("🚀 ~ file: moviesController.js ~ line 222 ~ deleteMovie: ~ error", error)
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+        })
         }
     }
     //get movies by category, by Id

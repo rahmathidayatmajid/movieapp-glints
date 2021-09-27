@@ -1,8 +1,8 @@
 'use strict';
 
-const tableName = "MovieCategories";
+const tableName = "MovieCharacters";
 
-const fkName = "movieId_on_moviecategories_fk";
+const fkName = "movieId_on_moviecharacters_fk";
 
 module.exports = {
   up: (queryInterFace, sequelize) => queryInterFace.addConstraint(tableName, {
