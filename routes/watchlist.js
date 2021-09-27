@@ -1,7 +1,8 @@
-const router = require('express').Router()
-    , watchlist = require('../controllers/watchlist')
+const router = require('express').Router(),
+    watchlist = require('../controllers/watchlist'),
+    auth = require('../middlewares/auth')
 
-router.post('/add', watchlist.addWatchlist)
-router.delete('/', watchlist.deleteWatchlist)
+router.post('/add', auth, watchlist.addWatchlist)
+router.delete('/', auth, watchlist.deleteWatchlist)
 
 module.exports = router;

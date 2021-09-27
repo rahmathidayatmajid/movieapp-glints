@@ -1,11 +1,14 @@
 const router = require('express').Router()
 const user = require('../controllers/usersController')
+const auth = require('../middlewares/auth')
+const authAdmin = require('../middlewares/authAdmin')
+const uploadProfile = require('../middlewares/uploadProfile')
     //router
 
 router.post('/signup', user.signUp)
-router.put('/:id', user.editUserBasic)
-router.put('/:id', user.editUserByAdmin)
-router.get('/:id', user.getOneUser)
+router.put('/:id', auth, uploadProfile('profilePict'), user.editUserBasic)
+router.put('/:id', auth, authAdmin, user.editUserByAdmin)
+router.get('/:id', auth, user.getOneUser)
 
 
 
