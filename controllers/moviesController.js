@@ -166,8 +166,6 @@ module.exports = {
             })
         }
     },
-    //get movies by category, by Id
-
 
     updateMovie: async(req, res) => {
         const { id } = req.params;
