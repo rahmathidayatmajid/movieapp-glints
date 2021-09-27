@@ -165,6 +165,7 @@ module.exports = {
             })
         }
     },
+
     updateMovie: async(req, res) => {
         const { id } = req.params;
         const { title, synopsis, release_date, budget, director, featured_song } = req.body

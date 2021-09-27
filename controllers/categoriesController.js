@@ -1,5 +1,4 @@
 const { Category, MovieCategory, Movie } = require('../models');
-const moviesController = require('./moviesController');
 
 module.exports = {
     postGenre : async (req, res) => {
