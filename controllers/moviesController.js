@@ -93,7 +93,6 @@ module.exports = {
             })
         }
     },
-
     getAllMovie: async(req, res) => {
         const limit = 3;
         const page = req.params.page;
@@ -219,7 +218,6 @@ module.exports = {
             })
         }
     },
-
     deleteMovie: async(req, res) => {
         const { id } = req.params;
 
