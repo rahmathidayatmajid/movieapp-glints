@@ -2,12 +2,21 @@ const { Character } = require('../models')
 
 module.exports = {
     postActor : async (req, res) => {
-        const body = req.body;
+        const name = req.body.name;
         const file = req.file;
 
         try {
+            const check = await Character.findOne({ where: { name } });
+            
+            if (check) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'Already added to character'
+                });
+            }
+
             const actor = await Character.create({
-                name: body.name,
+                name,
                 //profilePict: file.path
             });
 

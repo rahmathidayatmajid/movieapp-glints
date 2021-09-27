@@ -14,7 +14,7 @@ module.exports = {
       rating: {
         type: Sequelize.INTEGER
       },
-      storyline: {
+      synopsis: {
         type: Sequelize.STRING
       },
       poster: {
