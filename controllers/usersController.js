@@ -46,6 +46,7 @@ module.exports = {
             })
 
         } catch (error) {
+            console.log(error)
             res.status(500).json({
                 status: "failed",
                 message: "Internal Server Error"
@@ -161,6 +162,66 @@ module.exports = {
             res.status(500).json({
                 status: "failed",
                 message: "Internal Server Error"
+            })
+        }
+    },
+    signIn: async(req, res) => {
+        const body = req.body
+        try {
+            const schema = joi.object({
+                email: joi.string().required(),
+                password: joi.string().min(5).required()
+            })
+
+            const { error } = schema.validate({...body }, { abortEarly: false })
+
+            if (error) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Please insert username or password"
+                })
+            }
+
+            const checkAdmin = await User.findOne({
+                where: {
+                    email: body.email
+                }
+            })
+
+            if (!checkAdmin) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Invalid username or password"
+                })
+            }
+
+            const checkPassword = await bcrypt.compare(body.password, checkAdmin.dataValues.password)
+
+            if (!checkPassword) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Invalid username or password"
+                })
+            }
+
+            const payload = {
+                email: checkAdmin.dataValues.email,
+                isAdmin: checkAdmin.dataValues.isAdmin,
+                id: checkAdmin.dataValues.id
+            }
+
+            jwt.sign(payload, process.env.PWD_TOKEN, { expiresIn: 3600 }, (err, token) => {
+                return res.status(200).json({
+                    status: "success",
+                    message: "Success signin",
+                    data: token
+                })
+            })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({
+                status: "failed",
+                message: "Internal server error"
             })
         }
     }
