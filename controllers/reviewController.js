@@ -155,29 +155,59 @@ module.exports = {
     },
     getAllReviewByMovie: async(req, res) => {
         const id = req.params.id
+        const load = req.params.load
         try {
-            const findReview = await Review.findAll({
-                where: {
-                    movieId: id
-                },
-                include: {
-                    model: User,
-                    attributes: ['fullName', 'profilePict']
-                }
-            })
+            if (load <= 6) {
+                const limit = 6
+                const findReview = await Review.findAll({
+                    where: {
+                        movieId: id
+                    },
+                    include: {
+                        model: User,
+                        attributes: ['fullName', 'profilePict']
+                    },
+                    limit: limit,
+                    offset: 0
+                })
 
-            if (!findReview) {
-                return res.status(400).json({
-                    status: "failed",
-                    message: "there's no review yet in this movie"
+                if (!findReview) {
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "there's no review yet in this movie"
+                    })
+                }
+
+                return res.status(200).json({
+                    status: "success",
+                    message: "success retrieved data",
+                    data: findReview
+                })
+            } else {
+                const findReview = await Review.findAll({
+                    where: {
+                        movieId: id
+                    },
+                    include: {
+                        model: User,
+                        attributes: ['fullName', 'profilePict']
+                    }
+                })
+
+                if (!findReview) {
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "there's no review yet in this movie"
+                    })
+                }
+
+                return res.status(200).json({
+                    status: "success",
+                    message: "success retrieved data",
+                    data: findReview
                 })
             }
 
-            return res.status(200).json({
-                status: "success",
-                message: "success retrieved data",
-                data: findReview
-            })
         } catch (error) {
             return res.status(500).json({
                 status: 'failed',

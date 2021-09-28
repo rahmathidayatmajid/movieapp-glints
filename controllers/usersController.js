@@ -18,12 +18,7 @@ module.exports = {
                 isAdmin: joi.string()
             })
 
-            const { error } = schema.validate({
-                fullName: body.fullName,
-                email: body.email,
-                password: body.password,
-                isAdmin: body.isAdmin
-            }, { abortEarly: false })
+            const { error } = schema.validate({...body }, { abortEarly: false })
 
             if (error) {
                 return res.status(400).json({
@@ -45,7 +40,7 @@ module.exports = {
                     fullName: body.fullName,
                     email: body.email,
                     password: hash,
-                    isAdmin: body.isAdmin
+                    isAdmin: false
                 })
 
                 return res.status(200).json({
