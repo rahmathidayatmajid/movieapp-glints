@@ -30,7 +30,6 @@ module.exports = {
             })
 
         } catch (error) {
-            console.log(error)
             return res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -55,7 +54,6 @@ module.exports = {
                 data: genre
             });
         } catch (error) {
-            console.log(error)
             return res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
