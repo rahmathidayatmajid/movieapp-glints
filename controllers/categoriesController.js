@@ -1,12 +1,12 @@
 const { Category, MovieCategory, Movie } = require('../models');
-
+const { Op } = require('sequelize')
 module.exports = {
-    postGenre : async (req, res) => {
+    postGenre: async(req, res) => {
         const name = req.body.name;
 
         try {
             const check = await Category.findOne({ where: { name } });
-            
+
             if (check) {
                 return res.status(400).json({
                     status: 'failed',
@@ -17,7 +17,7 @@ module.exports = {
                 name
             });
 
-            if(!genre) {
+            if (!genre) {
                 return res.status(400).json({
                     status: 'failed',
                     message: 'Cannot insert data genre'
@@ -30,7 +30,6 @@ module.exports = {
             })
 
         } catch (error) {
-            console.log(error)
             return res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -38,12 +37,12 @@ module.exports = {
         }
     },
 
-    getGenre: async (req, res) => {
+    getGenre: async(req, res) => {
         try {
             const genre = await Category.findAll({
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
             });
-            if(!genre) {
+            if (!genre) {
                 return res.status(400).json({
                     status: "failed",
                     massage: "Data not found"
@@ -55,7 +54,6 @@ module.exports = {
                 data: genre
             });
         } catch (error) {
-            console.log(error)
             return res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -63,10 +61,10 @@ module.exports = {
         }
     },
 
-    deleteGenre: async (req, res) => {
+    deleteGenre: async(req, res) => {
         const { id } = req.params;
         try {
-            await Category.destroy({ where: {id: id } });
+            await Category.destroy({ where: { id: id } });
             res.status(200).json({
                 status: 'Success',
                 message: `genre has been deleted`
@@ -80,39 +78,35 @@ module.exports = {
         }
     },
 
-    getAllMovie: async (req, res) => {
-        const { id } = req.params;
-
+    getAllMovie: async(req, res) => {
+        const category = req.params.category
         try {
-            const category = await Category.findOne({ 
-                where: { id },
-                attributes: { exclude: ['createdAt', 'updatedAt'] },
+            const getMovie = await Movie.findAll({
                 include: {
-                    model: MovieCategory,
-                    attributes: ['categoryId'],
-                    include: {
-                        model: Movie,
-                        attributes: ['title'],
+                    model: Category,
+                    where: {
+                        name: [{
+                            [Op.iLike]: "%" + category + "%"
+                        }]
                     }
                 }
-            });
+            })
 
-            if (!category) {
+            if (!getMovie) {
                 return res.status(400).json({
-                    status: 'failed',
-                    message: `No category found with id ${id}`
-                });
+                    status: "failed",
+                    message: "There no movie where category like that"
+                })
             }
 
-            res.status(200).json({
-                status: 'Success',
-                message: 'Success ',
-                data: {
-                    movie: category
-                }
+            return res.status(200).json({
+                status: "success",
+                message: "success retrieved data",
+                data: getMovie
             })
+
         } catch (error) {
-        console.log("🚀 ~ file: categoriesController.js ~ line 94 ~ getAllMovie: ~ error", error)
+            console.log("🚀 ~ file: categoriesController.js ~ line 94 ~ getAllMovie: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'

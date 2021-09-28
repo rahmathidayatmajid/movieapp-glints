@@ -12,7 +12,8 @@ module.exports = {
             isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED
         }).then(async(transaction) => {
             const body = req.body
-            const user = req.params.id
+            const movieid = req.params.id
+            const user = req.user
             try {
                 const schema = joi.object({
                     rating: joi.number().min(0).max(5).required(),
@@ -28,7 +29,7 @@ module.exports = {
                         error: error['details'][0]["message"]
                     })
                 }
-                const checkUser = await Review.findOne({ where: { userId: user, movieId: body.movieId } })
+                const checkUser = await Review.findOne({ where: { userId: user.id, movieId: movieid } })
                 if (checkUser) {
                     return res.status(400).json({
                         status: "failed",
@@ -39,13 +40,13 @@ module.exports = {
                 const createReview = await Review.create({
                     rating: body.rating,
                     comment: body.comment,
-                    movieId: body.movieId,
-                    userId: user
+                    movieId: movieid,
+                    userId: user.id
                 }, { transaction })
 
                 const avarageRating = await Review.findAll({
                     where: {
-                        movieId: body.movieId
+                        movieId: movieid
                     }
                 }, { transaction })
 
@@ -62,7 +63,7 @@ module.exports = {
                     rating: reviewAsli,
                 }, {
                     where: {
-                        id: body.movieId
+                        id: movieid
                     }
                 }, { transaction })
 
@@ -93,9 +94,10 @@ module.exports = {
             isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED
         }).then(async(transaction) => {
             const body = req.body
-            const user = req.params.id
+            const movieid = req.params.id
+            const user = req.user
             try {
-                const checkReview = await Review.findOne({ where: { userId: user, movieId: body.movieId } })
+                const checkReview = await Review.findOne({ where: { userId: user.id, movieId: movieid } })
                 if (!checkReview) {
                     transaction.rollback()
                     return res.status(400).json({
@@ -107,11 +109,11 @@ module.exports = {
                     rating: body.rating,
                     comment: body.comment
                 }, {
-                    where: { userId: user, movieId: checkReview.dataValues.movieId }
+                    where: { userId: user.id, movieId: checkReview.dataValues.movieId }
                 }, { transaction })
 
                 const getAllReview = await Review.findAll({
-                    where: { movieId: body.movieId }
+                    where: { movieId: movieid }
                 }, { transaction })
 
                 let ratarata = getAllReview.map(e => e.dataValues.rating)
@@ -123,7 +125,7 @@ module.exports = {
                     rating: reviewAsli
                 }, {
                     where: {
-                        id: body.movieId
+                        id: movieid
                     }
                 }, { transaction })
 
