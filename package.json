@@ -6,8 +6,7 @@
     "scripts": {
         "dev": "nodemon run dev",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "heroku-release": "node_modules/.bin/sequelize db:migrate && node_modules/.bin/sequelize db:seed:all",
-        "start": "node index.js"
+        "heroku-release": "node_modules/.bin/sequelize db:migrate && node_modules/.bin/sequelize db:seed:all"
     },
     "repository": {
         "type": "git",
