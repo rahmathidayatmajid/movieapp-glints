@@ -1,21 +1,40 @@
-const { Review } = require('../models')
+const { Review, User } = require('../models')
 const model = require('../models/index')
 const { Movie } = require('../models')
+const Sequelize = require('sequelize')
+const joi = require('joi')
 
 
 module.exports = {
     create: async(req, res) => {
-        model.sequelize.transaction(async transaction => {
+        model.sequelize.transaction({
+            autocommit: false,
+            isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED
+        }).then(async(transaction) => {
             const body = req.body
             const user = req.params.id
             try {
-                const checkUser = await Review.findOne({
-                    where: {
-                        userId: user,
-                        movieId: body.movieId
-                    }
+                const schema = joi.object({
+                    rating: joi.number().min(0).max(5).required(),
+                    comment: joi.string().required(),
+                    movieId: joi.number()
                 })
-                console.log("🚀 ~ file: reviewController.js ~ line 18 ~ create:async ~ checkUser", checkUser)
+                const { error } = schema.validate({...body }, { abortEarly: false })
+                if (error) {
+                    transaction.rollback()
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "fields cannot be empty to add review",
+                        error: error['details'][0]["message"]
+                    })
+                }
+                const checkUser = await Review.findOne({ where: { userId: user, movieId: body.movieId } })
+                if (checkUser) {
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "You already add review"
+                    })
+                }
 
                 const createReview = await Review.create({
                     rating: body.rating,
@@ -23,144 +42,169 @@ module.exports = {
                     movieId: body.movieId,
                     userId: user
                 }, { transaction })
-                console.log("🚀 ~ file: reviewController.js ~ line 26 ~ create:async ~ createReview", createReview)
 
                 const avarageRating = await Review.findAll({
                     where: {
-                        movieId: createReview.dataValues.movieId
+                        movieId: body.movieId
                     }
-                }, { transaction }).then(result => {
-                    const test = result.map(e => {
-                        return e.dataValues.rating
-                    })
-                    const sum = test.reduce((a, b) => a + b)
-                    const reviewAsli = Math.round(sum / test.length)
-                    result = reviewAsli
-                    return result
+                }, { transaction })
 
+                let ratarata = avarageRating.map(e => {
+                    return e.dataValues.rating
                 })
-                console.log("🚀 ~ file: reviewController.js ~ line 42 ~ create:async ~ avarageRating", avarageRating)
+                ratarata.push(body.rating)
 
-                console.log(avarageRating)
+                const sum = ratarata.reduce((a, b) => a + b)
+                const reviewAsli = Math.round(sum / ratarata.length)
 
                 const updateMovie = await Movie.update({
                     ...body,
-                    rating: avarageRating,
+                    rating: reviewAsli,
                 }, {
                     where: {
-                        id: createReview.dataValues.movieId
+                        id: body.movieId
                     }
                 }, { transaction })
 
 
                 if (!updateMovie[0]) {
+                    transaction.rollback()
                     return res.status(400).json({
                         status: "failed",
                         message: "Unable to update database",
                     });
                 }
-
+                transaction.commit()
                 res.status(200).json({
                     status: "success",
                     message: "success add review to movie"
                 })
                 console.log("commit")
-                transaction.commit()
+
             } catch (error) {
                 console.log(error)
-                // transaction.rollback()
+                transaction.rollback()
             }
         })
     },
-    // update: async(req, res) => {
-    //     model.sequelize.transaction(async transaction => {
-    //         const body = req.body
-    //         const user = req.user
-    //         const id = req.params.id
-    //         try {
-    //             // ============================================================
-    //             // update si review yang di klik user
-    //             // ============================================================
+    update: async(req, res) => {
+        model.sequelize.transaction({
+            autocommit: false,
+            isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED
+        }).then(async(transaction) => {
+            const body = req.body
+            const user = req.params.id
+            try {
+                const checkReview = await Review.findOne({ where: { userId: user, movieId: body.movieId } })
+                if (!checkReview) {
+                    transaction.rollback()
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "cannot find review to update"
+                    })
+                }
+                const updateReview = await Review.update({
+                    rating: body.rating,
+                    comment: body.comment
+                }, {
+                    where: { userId: user, movieId: checkReview.dataValues.movieId }
+                }, { transaction })
 
-    //             const update = await Review.update({
-    //                 ...body,
-    //                 where: {
-    //                     id: id,
-    //                     userId: user.id
-    //                 }
-    //             }, { transaction }).catch(err => {
-    //                 if (err) {
-    //                     res.status(400).json({
-    //                         status: "failed",
-    //                         message: "cannot update review"
-    //                     })
-    //                 }
-    //             })
+                const getAllReview = await Review.findAll({
+                    where: { movieId: body.movieId }
+                }, { transaction })
 
-    //             // ============================================================
-    //             // cari semua review dan hitung rata rata rating
-    //             // ============================================================
+                let ratarata = getAllReview.map(e => e.dataValues.rating)
+                const sum = ratarata.reduce((a, b) => a + b)
+                const reviewAsli = Math.round(sum / ratarata.length)
 
-    //             const avarageRating = await Review.findAll({
-    //                 where: {
-    //                     movieId: update.dataValues.movieId
-    //                 }
-    //             }, { transaction }).then(result => {
-    //                 const test = result.map(e => {
-    //                     return e.dataValues.rating
-    //                 })
-    //                 const sum = test.reduce((a, b) => a + b)
-    //                 const reviewAsli = Math.round(sum / test.length)
-    //                 result = reviewAsli
-    //                 return result
+                const updateMovie = await Movie.update({
+                    ...body,
+                    rating: reviewAsli
+                }, {
+                    where: {
+                        id: body.movieId
+                    }
+                }, { transaction })
 
-    //             }).catch(err => {
-    //                 console.log(err)
-    //                 transaction.rollback()
-    //             })
+                if (!updateMovie[0]) {
+                    transaction.rollback()
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "Unable to update database",
+                    });
+                }
+                transaction.commit()
+                res.status(200).json({
+                    status: "success",
+                    message: "success update review"
+                })
+                console.log("commit")
 
-    //             // ============================================================
-    //             // update rating yang sudah dirata rata ke movie
-    //             // ============================================================
+            } catch (error) {
+                console.log(error)
+                transaction.rollback()
+                return res.status(500).json({
+                    status: "failed",
+                    message: "Internal Server Error"
+                })
+            }
+        })
+    },
+    getAllReviewByMovie: async(req, res) => {
+        const id = req.params.id
+        try {
+            const findReview = await Review.findAll({
+                where: {
+                    movieId: id
+                },
+                include: {
+                    model: User,
+                    attributes: ['fullName', 'profilePict']
+                }
+            })
 
-    //             const updateMovie = await Movie.update({
-    //                 ...body,
-    //                 rating: avarageRating,
-    //                 where: {
-    //                     id: update.dataValues.movieId
-    //                 }
-    //             }, { transaction })
+            if (!findReview) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "there's no review yet in this movie"
+                })
+            }
 
-    //             if (!updateMovie[0]) {
-    //                 return res.status(400).json({
-    //                     status: "failed",
-    //                     message: "cannot update review movie"
-    //                 })
-    //             }
+            return res.status(200).json({
+                status: "success",
+                message: "success retrieved data",
+                data: findReview
+            })
+        } catch (error) {
+            return res.status(500).json({
+                status: 'failed',
+                message: "Internal Server Error"
+            })
+        }
+    },
+    getShareReviewOfUser: async(req, res) => {
+        const id = req.params.id
+        try {
+            const findReview = await Review.findAll({ where: { userId: id } })
+            if (!findReview) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'User havent review any movies',
+                    data: []
+                })
+            }
+            return res.status(200).json({
+                status: 'success',
+                message: 'success retrieved data',
+                data: findReview
+            })
 
-    //             res.status(200).json({
-    //                 status: "success",
-    //                 message: "success update review"
-    //             })
-
-
-
-    //             console.log('commit')
-    //             transaction.commit()
-
-    //         } catch (error) {
-    //             transaction.rollback()
-    //         }
-    //     })
-    // },
-    // getAllReview: (req, res) => {
-    //     try {
-
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             status: "failed",
-    //             message: "Internal Server"
-    //         })
-    //     }
-    // }
+        } catch (error) {
+            return res.status(500).json({
+                status: 'failed',
+                message: "Internal Server Error"
+            })
+        }
+    }
 }

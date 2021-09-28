@@ -14,14 +14,23 @@ module.exports = {
             const schema = joi.object({
                 fullName: joi.string().required(),
                 email: joi.string().required(),
-                password: joi.string().required()
+                password: joi.string().required(),
+                isAdmin: joi.string()
             })
 
             const { error } = schema.validate({
                 fullName: body.fullName,
                 email: body.email,
-                password: body.password
+                password: body.password,
+                isAdmin: body.isAdmin
             }, { abortEarly: false })
+
+            if (error) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Please input username or password"
+                })
+            }
 
             const checkEmail = await User.findOne({ where: { email: body.email } })
             if (checkEmail) {
@@ -36,7 +45,7 @@ module.exports = {
                     fullName: body.fullName,
                     email: body.email,
                     password: hash,
-                    isAdmin: false
+                    isAdmin: body.isAdmin
                 })
 
                 return res.status(200).json({
@@ -154,9 +163,18 @@ module.exports = {
                 }]
             })
 
-            if (!user)
+            if (!data) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Cannot find user"
+                })
+            }
 
-                res.send(data)
+            return res.status(200).json({
+                status: "success",
+                message: "success retrieved data",
+                data: data
+            })
 
         } catch (error) {
             res.status(500).json({
