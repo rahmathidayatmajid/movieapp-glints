@@ -85,13 +85,13 @@ module.exports = {
 
     updateActor: async(req, res) => {
         const { id } = req.params;
-        const poster = req.file.path;
+        const profilePict = req.file.path;
         const { name } = req.body;
 
         try {
             const updateActor = await Character.update({
                 name,
-                poster
+                profilePict
             }, {
                 where: { id }
             });
@@ -105,7 +105,7 @@ module.exports = {
 
             const response = await Character.findOne({
                 where: { id },
-                attributes: ['name', 'poster']
+                attributes: ['name', 'profilePict']
             });
 
             res.status(200).json({
