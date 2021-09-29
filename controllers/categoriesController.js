@@ -1,5 +1,6 @@
 const { Category, MovieCategory, Movie } = require('../models');
 const { Op } = require('sequelize')
+
 module.exports = {
     postGenre: async(req, res) => {
         const name = req.body.name;
@@ -82,16 +83,6 @@ module.exports = {
     getAllMovie: async(req, res) => {
         const category = req.params.category
         try {
-            // const getMovie = await Movie.findAll({
-            //     include: {
-            //         model: Category,
-            //         where: {
-            //             name: [{
-            //                 [Op.iLike]: "%" + category + "%"
-            //             }]
-            //         }
-            //     }
-            // })
             const getMovie = await Movie.findAll({
                 include: {
                     model: MovieCategory,
@@ -121,7 +112,6 @@ module.exports = {
             })
 
         } catch (error) {
-            console.log("🚀 ~ file: categoriesController.js ~ line 94 ~ getAllMovie: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'

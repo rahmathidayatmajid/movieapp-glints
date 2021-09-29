@@ -83,7 +83,6 @@ module.exports = {
                 console.log("commit")
 
             } catch (error) {
-                console.log(error)
                 transaction.rollback()
             }
         })
@@ -141,10 +140,8 @@ module.exports = {
                     status: "success",
                     message: "success update review"
                 })
-                console.log("commit")
 
             } catch (error) {
-                console.log(error)
                 transaction.rollback()
                 return res.status(500).json({
                     status: "failed",

@@ -26,9 +26,9 @@ module.exports = {
                 budget: body.budget,
                 director: body.director,
                 featured_song: body.featured_song,
-                poster: file.path
+                poster: file.path,
+                trailer: body.trailer
             });
-            console.log("🚀 ~ file: moviesController.js ~ line 42 ~ postMovie: ~ movies", movies)
 
             if (!movies) {
                 res.status(400).json({
@@ -42,8 +42,6 @@ module.exports = {
                 data: movies
             })
         } catch (error) {
-            console.log("🚀 ~ file: moviesController.js ~ line 34 ~ postMovie: ~ error", error)
-
             res.status(500).json({
                 status: 'error',
                 message: 'Internal Server Error'
@@ -70,7 +68,6 @@ module.exports = {
                     }
                 }]
             });
-            console.log("🚀 ~ file: moviesController.js ~ line 62 ~ searchMovie: ~ movies", movies)
 
             if (movies.length === 0) {
                 return res.status(404).json({
@@ -87,7 +84,6 @@ module.exports = {
                 }
             });
         } catch (error) {
-            console.log("🚀 ~ file: moviesController.js ~ line 45 ~ getMovie: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -102,7 +98,7 @@ module.exports = {
             const movies = await Movie.findAll({
                 limit: limit,
                 offset: offset,
-                attributes: { exclude: ['createdAt', 'updatedAt', 'count'] },
+                attributes: ['poster', 'title'],
                 include: [{
                     model: MovieCategory,
                     attributes: ['categoryId'],
@@ -159,7 +155,6 @@ module.exports = {
                 data: { movie }
             });
         } catch (error) {
-            console.log("🚀 ~ file: moviesController.js ~ line 124 ~ getMovieById: ~ error", error)
             res.status(500).json({
                 status: 'error',
                 message: 'Internal Server Error'
@@ -169,7 +164,8 @@ module.exports = {
 
     updateMovie: async(req, res) => {
         const { id } = req.params;
-        const { title, synopsis, release_date, budget, director, featured_song } = req.body
+        const poster = req.file.path;
+        const { title, synopsis, release_date, budget, director, featured_song, trailer } = req.body
 
         try {
             const updateMovie = await Movie.update({
@@ -179,6 +175,8 @@ module.exports = {
                 budget,
                 director,
                 featured_song,
+                poster,
+                trailer
             }, {
                 where: { id }
             });
@@ -212,7 +210,6 @@ module.exports = {
                 data: response
             })
         } catch (error) {
-            console.log("🚀 ~ file: moviesController.js ~ line 175 ~ putMovie: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -248,7 +245,6 @@ module.exports = {
                 message: 'Success delete movie'
             })
         } catch (error) {
-            console.log("🚀 ~ file: moviesController.js ~ line 222 ~ deleteMovie: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
