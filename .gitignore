@@ -3,3 +3,4 @@ playground.js
 countRating.js
 .gitignore
 config.js
+.env

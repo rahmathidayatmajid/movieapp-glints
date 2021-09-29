@@ -237,5 +237,44 @@ module.exports = {
                 message: "Internal server error"
             })
         }
+    },
+
+    getUserLogin: async (req, res) => {
+        const { id } = req.user
+
+        try {
+            const userLogin = await User.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Review,
+                where: {
+                    userId: id
+                },
+                attributes: ["rating", "comment"]
+            }]
+        
+        })
+
+        if (!userLogin) {
+            return res.status(400).json({
+                status: "failed",
+                message: "Cannot find user"
+            })
+        }
+
+        return res.status(200).json({
+            status: "success",
+            message: "success retrieved data",
+            data: data
+        })
+        } catch (error) {
+        console.log("🚀 ~ file: usersController.js ~ line 246 ~ getUserLogin: ~ error", error)
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+            })
+        }
     }
 }
