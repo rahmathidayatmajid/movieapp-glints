@@ -3,13 +3,11 @@ const { Character, Movie, MovieCharacter } = require('../models')
 module.exports = {
     movieCharacter: async (req, res) => {
         const movieId = req.body.movieId;
-        console.log("🚀 ~ file: movie_character.js ~ line 6 ~ movieCharacter: ~ movieId", movieId)
         const characterId = req.body.characterId;
-        console.log("🚀 ~ file: movie_character.js ~ line 7 ~ movieCharacter: ~ characterId", characterId)
+
 
         try {
             const check = await MovieCharacter.findOne({ where: { movieId, characterId } });
-            console.log("🚀 ~ file: movie_character.js ~ line 11 ~ movieCharacter: ~ check", check)
 
             if (check) {
                 return res.status(400).json({
@@ -22,7 +20,6 @@ module.exports = {
                 movieId: movieId,
                 characterId: characterId
             });
-            console.log("🚀 ~ file: movie_character.js ~ line 22 ~ movieCharacter: ~ movieCharacter", movieCharacter)
 
             if (!movieCharacter) {
                 return res.status(400).json({
@@ -47,7 +44,6 @@ module.exports = {
                     }
                 ]
             });
-            console.log("🚀 ~ file: movie_character.js ~ line 44 ~ movieCharacter: ~ response", response)
             res.status(200).json({
                 status: 'Success',
                 message: 'Added successfully',
@@ -56,7 +52,6 @@ module.exports = {
                 }
             });
         } catch (error) {
-            console.log("🚀 ~ file: movie_character.js ~ line 55 ~ movieCharacter: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -116,7 +111,6 @@ module.exports = {
                }
            });
         } catch (error) {
-        console.log("🚀 ~ file: movies_character.js ~ line 72 ~ removeCharacter: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'

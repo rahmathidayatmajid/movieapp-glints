@@ -51,7 +51,6 @@ module.exports = {
             })
 
         } catch (error) {
-            console.log(error)
             res.status(500).json({
                 status: "failed",
                 message: "Internal Server Error"
@@ -149,7 +148,8 @@ module.exports = {
             const data = await User.findOne({
                 where: {
                     id: id
-                }, //exluide
+                },
+                attributes: ['fullName', 'email', 'profilePict'],
                 include: [{
                     model: Review,
                     where: {
@@ -184,7 +184,7 @@ module.exports = {
         try {
             const schema = joi.object({
                 email: joi.string().required(),
-                password: joi.string().min(5).required()
+                password: joi.string().required()
             })
 
             const { error } = schema.validate({...body }, { abortEarly: false })
@@ -192,7 +192,7 @@ module.exports = {
             if (error) {
                 return res.status(400).json({
                     status: "failed",
-                    message: "Please insert username or password"
+                    message: "Please insert email or password"
                 })
             }
 
@@ -205,7 +205,7 @@ module.exports = {
             if (!checkAdmin) {
                 return res.status(400).json({
                     status: "failed",
-                    message: "Invalid username or password"
+                    message: "Invalid email or password"
                 })
             }
 
@@ -214,7 +214,7 @@ module.exports = {
             if (!checkPassword) {
                 return res.status(400).json({
                     status: "failed",
-                    message: "Invalid username or password"
+                    message: "Invalid email or password"
                 })
             }
 
@@ -232,10 +232,72 @@ module.exports = {
                 })
             })
         } catch (error) {
-            console.log(error)
             return res.status(500).json({
                 status: "failed",
                 message: "Internal server error"
+            })
+        }
+    },
+
+    getUserLogin: async(req, res) => {
+        const { id } = req.user
+
+        try {
+            const userLogin = await User.findOne({
+                where: {
+                    id: id
+                },
+                attributes: ['fullName', 'email', 'profilePict'],
+                include: [{
+                    model: Review,
+                    where: {
+                        userId: id
+                    },
+                    attributes: ["rating", "comment"]
+                }]
+            })
+
+            if (!userLogin) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Cannot find user"
+                })
+            }
+
+            return res.status(200).json({
+                status: "success",
+                message: "success retrieved data",
+                data: data
+            })
+        } catch (error) {
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+            })
+        }
+    },
+    delete: (req, res) => {
+        const id = req.params.id
+        try {
+            const deleteUser = await User.destroy({
+                where: { id }
+            })
+            if (!deleteUser) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "cannot delete this user"
+                })
+            }
+
+            return res.status(200).json({
+                status: 'success',
+                message: "success deleted user"
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
             })
         }
     }

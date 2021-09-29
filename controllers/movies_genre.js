@@ -3,14 +3,10 @@ const { Category, Movie, MovieCategory } = require('../models')
 module.exports = {
     movieCategory: async (req, res) => {
         const movieId = req.body.movieId;
-        console.log("🚀 ~ file: movies_genre.js ~ line 6 ~ movieCategory: ~ movieId", movieId)
-        
         const categoryId = req.body.categoryId;
-        console.log("🚀 ~ file: movies_genre.js ~ line 9 ~ movieCategory: ~ categoryId", categoryId)
 
         try {
             const check = await MovieCategory.findOne({ where: { movieId, categoryId } });
-            console.log("🚀 ~ file: movies_genre.js ~ line 13 ~ movieCategory: ~ check", check)
 
             if (check) {
                 return res.status(400).json({
@@ -22,9 +18,7 @@ module.exports = {
             const movieCategory = await MovieCategory.create({
                 movieId: movieId,
                 categoryId: categoryId
-            });
-            console.log("🚀 ~ file: movies_genre.js ~ line 26 ~ movieCategory: ~ movieCategory", movieCategory)
-            
+            });            
 
             if (!movieCategory) {
                 return res.status(400).json({
@@ -58,7 +52,6 @@ module.exports = {
                 }
             });
         } catch (error) {
-            console.log("🚀 ~ file: movies_genre.js ~ line 62 ~ movieCategory: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -119,7 +112,6 @@ module.exports = {
                 }
             })
         } catch (error) {
-        console.log("🚀 ~ file: movies_genre.js ~ line 75 ~ removeCategory: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
