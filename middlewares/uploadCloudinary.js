@@ -19,7 +19,7 @@ module.exports = (namaKolum) => {
         const storage = new CloudinaryStorage({
             cloudinary: cloudinary,
             params: {
-                folder: "miniproject",
+                folder: `miniproject/${file.fieldname}s`,
                 resources_type: "raw",
                 public_id: (req, file) => {
                     return "image -" + new Date().getTime + path.extname(file.originalname)
