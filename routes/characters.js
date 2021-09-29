@@ -6,7 +6,7 @@ const upload = require('../middlewares/uploadCloudinary')
 
 router.post('/add', auth, upload('profilePict'), authAdmin, characterController.postActor)
 router.get('/', characterController.getActor)
-router.put('/:id', auth, uploadCharacter('profilePict'), authAdmin, characterController.updateActor)
+router.put('/:id', auth, upload('profilePict'), authAdmin, characterController.updateActor)
 router.delete('/:id', auth, authAdmin, characterController.deleteActor)
 
 module.exports = router;
