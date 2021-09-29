@@ -20,7 +20,7 @@ module.exports = (namaKolum) => {
             cloudinary: cloudinary,
             params: (req, file) => {
                 return {
-                    folder: `coways/${file.fieldname}s`,
+                    folder: `movieapp/${file.fieldname}s`,
                     resource_type: 'raw',
                     public_id: path.parse(file.originalname).name +
                         ' - ' +
