@@ -1,13 +1,13 @@
 const { Character } = require('../models')
 
 module.exports = {
-    postActor : async (req, res) => {
+    postActor: async(req, res) => {
         const name = req.body.name;
         const file = req.file;
 
         try {
             const check = await Character.findOne({ where: { name } });
-            
+
             if (check) {
                 return res.status(400).json({
                     status: 'failed',
@@ -20,7 +20,7 @@ module.exports = {
                 profilePict: file.path
             });
 
-            if(!actor) {
+            if (!actor) {
                 return res.status(400).json({
                     status: 'failed',
                     message: 'Cannot insert data actor'
@@ -41,12 +41,12 @@ module.exports = {
         }
     },
 
-    getActor: async (req, res) => {
+    getActor: async(req, res) => {
         try {
             const actor = await Character.findAll({
                 attributes: { exclude: ['createdAt', 'updatedAt'] }
             });
-            if(!actor) {
+            if (!actor) {
                 return res.status(400).json({
                     status: "failed",
                     massage: "Data not found"
@@ -66,10 +66,10 @@ module.exports = {
         }
     },
 
-    deleteActor: async (req, res) => {
+    deleteActor: async(req, res) => {
         const { id } = req.params;
         try {
-            await Character.destroy({ where: {id: id } });
+            await Character.destroy({ where: { id: id } });
             res.status(200).json({
                 status: 'Success',
                 message: "Actor has been deleted"
@@ -77,6 +77,43 @@ module.exports = {
         } catch (error) {
             console.log(error)
             return res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+            })
+        }
+    },
+
+    updateActor: async(req, res) => {
+        const { id } = req.params;
+        const poster = req.file.path;
+        const { name } = req.body;
+
+        try {
+            const updateActor = await Character.update({
+                name,
+                poster
+            }, {
+                where: { id }
+            });
+
+            if (!updateActor) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'Failed to update Character, please try again'
+                });
+            }
+
+            const response = await Character.findOne({
+                where: { id },
+                attributes: ['name', 'poster']
+            });
+
+            res.status(200).json({
+                status: 'Success',
+                message: 'Character update successfully'
+            });
+        } catch (error) {
+            res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
             })
