@@ -276,7 +276,7 @@ module.exports = {
             })
         }
     },
-    delete: (req, res) => {
+    delete: async(req, res) => {
         const id = req.params.id
         try {
             const deleteUser = await User.destroy({
