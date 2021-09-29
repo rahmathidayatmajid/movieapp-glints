@@ -83,7 +83,6 @@ module.exports = {
                 console.log("commit")
 
             } catch (error) {
-                console.log(error)
                 transaction.rollback()
             }
         })
@@ -141,10 +140,8 @@ module.exports = {
                     status: "success",
                     message: "success update review"
                 })
-                console.log("commit")
 
             } catch (error) {
-                console.log(error)
                 transaction.rollback()
                 return res.status(500).json({
                     status: "failed",
@@ -218,7 +215,16 @@ module.exports = {
     getShareReviewOfUser: async(req, res) => {
         const id = req.params.id
         try {
-            const findReview = await Review.findAll({ where: { userId: id } })
+            const findReview = await Review.findAll({
+                where: {
+                    userId: id
+                },
+                attributes: ['rating', 'comment'],
+                include: {
+                    model: Movie,
+                    attributes: ['title', 'poster']
+                }
+            })
             if (!findReview) {
                 return res.status(400).json({
                     status: 'failed',

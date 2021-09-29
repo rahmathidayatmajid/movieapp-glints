@@ -4,7 +4,6 @@ module.exports = {
     addWatchlist: async (req, res) => {
         const { id } = req.params;
         const userId = req.user.id;
-        console.log("🚀 ~ file: watchlist.js ~ line 7 ~ addWatchlist: ~ userId", userId)
         
         try {
             const check = await Watchlist.findOne({ 
@@ -56,7 +55,6 @@ module.exports = {
                 }
             });
         } catch (error) {
-        console.log("🚀 ~ file: watchlist.js ~ line 11 ~ addWatchlist: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server eror'
@@ -105,7 +103,6 @@ module.exports = {
                 }
             });
         } catch (error) {
-        console.log("🚀 ~ file: watchlist.js ~ line 69 ~ deleteWatchlist: ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
