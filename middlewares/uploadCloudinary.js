@@ -4,14 +4,13 @@ const cloudinary = require('cloudinary').v2
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
 
 cloudinary.config({
-    cloud_name: "dwaebjqvi",
-    api_key: "865442623764271",
-    api_secret: "oU-ZIRwlyCnLTV5Bukj9H-qpm7c",
+    cloud_name: "charactermovie",
+    api_key: "158377269216466",
+    api_secret: "FP6X0Qior2ifuHUeXdqiNnwSIv0",
 });
-
 // ============================================================
 
-// Upload Image ke cloudinary dgn folder profile-photo
+// Upload Image ke cloudinary dgn folder Character
 
 // ============================================================
 
@@ -20,7 +19,7 @@ module.exports = (namaKolum) => {
         const storage = new CloudinaryStorage({
             cloudinary: cloudinary,
             params: {
-                folder: "profile-photo",
+                folder: "miniproject",
                 resources_type: "raw",
                 public_id: (req, file) => {
                     return "image -" + new Date().getTime + path.extname(file.originalname)

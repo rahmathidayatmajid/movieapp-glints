@@ -2,9 +2,9 @@ const moviesController = require('../controllers/moviesController');
 const auth = require('../middlewares/auth')
 const authAdmin = require('../middlewares/authAdmin')
 const router = require('express').Router()
-const moviePoster = require('../middlewares/uploadMoviePoster')
+const upload = require('../middlewares/uploadCloudinary')
 
-router.post('/add', auth, moviePoster('poster'), authAdmin, moviesController.postMovie) //ok
+router.post('/add', auth, upload('poster'), authAdmin, moviesController.postMovie) //ok
 router.get('/search/:q_name', moviesController.searchMovie)
 router.get('/page/:page', moviesController.getAllMovie)
 router.get('/:id', moviesController.getMovieById)
