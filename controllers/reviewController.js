@@ -238,5 +238,34 @@ module.exports = {
                 message: "Internal Server Error"
             })
         }
+    },
+    delete: async(req, res) => {
+        const user = req.user
+        const id = req.params.id
+        try {
+            const deleteReview = await Review.delete({
+                where: {
+                    userId: user.id,
+                    movieId: id
+                }
+            })
+            if (!deleteReview) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "cannot delete review or not own review"
+                })
+            }
+
+            return res.status(200).json({
+                status: "success",
+                message: "Success deleted your review"
+            })
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 'failed',
+                message: "Internal Server Error"
+            })
+        }
     }
 }
