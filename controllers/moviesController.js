@@ -3,7 +3,7 @@ const { Movie, Character, MovieCharacter, Review, User, MovieCategory, Category 
 module.exports = {
     postMovie: async(req, res) => {
         const body = req.body;
-        const file = req.files;
+        const file = req.file;
 
         try {
             const checkMovie = await Movie.findOne({
@@ -25,7 +25,8 @@ module.exports = {
                 release_date: body.release_date,
                 budget: body.budget,
                 director: body.director,
-                featured_song: body.featured_song
+                featured_song: body.featured_song,
+                poster: file.path
             });
             console.log("🚀 ~ file: moviesController.js ~ line 42 ~ postMovie: ~ movies", movies)
 
@@ -71,7 +72,7 @@ module.exports = {
             });
             console.log("🚀 ~ file: moviesController.js ~ line 62 ~ searchMovie: ~ movies", movies)
 
-            if (movies != []) {
+            if (movies.length === 0) {
                 return res.status(404).json({
                     status: 'failed',
                     message: 'There is no movie found'

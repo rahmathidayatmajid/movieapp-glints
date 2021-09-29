@@ -4,6 +4,6 @@ const router = require('express').Router(),
     authAdmin = require('../middlewares/authAdmin')
 
 router.post('/add', auth, authAdmin, movie_category.movieCategory)
-router.delete('/delete', auth, authAdmin, movie_category.removeCategory)
+router.delete('/:id', auth, authAdmin, movie_category.removeCategory)
 
 module.exports = router;

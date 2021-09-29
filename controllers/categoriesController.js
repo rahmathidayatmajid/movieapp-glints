@@ -54,6 +54,7 @@ module.exports = {
                 data: genre
             });
         } catch (error) {
+
             return res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
@@ -67,7 +68,7 @@ module.exports = {
             await Category.destroy({ where: { id: id } });
             res.status(200).json({
                 status: 'Success',
-                message: `genre has been deleted`
+                message: `Genre has been deleted`
             });
         } catch (error) {
             console.log(error)
@@ -81,13 +82,27 @@ module.exports = {
     getAllMovie: async(req, res) => {
         const category = req.params.category
         try {
+            // const getMovie = await Movie.findAll({
+            //     include: {
+            //         model: Category,
+            //         where: {
+            //             name: [{
+            //                 [Op.iLike]: "%" + category + "%"
+            //             }]
+            //         }
+            //     }
+            // })
             const getMovie = await Movie.findAll({
                 include: {
-                    model: Category,
-                    where: {
-                        name: [{
-                            [Op.iLike]: "%" + category + "%"
-                        }]
+                    model: MovieCategory,
+                    attributes: ['categoryId'],
+                    include: {
+                        model: Category,
+                        where: {
+                            name: {
+                                [Op.iLike]: "%" + category + "%"
+                            }
+                        }
                     }
                 }
             })
