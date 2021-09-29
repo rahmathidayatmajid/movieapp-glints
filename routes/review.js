@@ -4,7 +4,8 @@ const auth = require('../middlewares/auth')
 
 router.post('/:id', auth, review.create)
 router.put('/:id', auth, review.update)
-router.get('/movie/:id', review.getAllReviewByMovie)
+    // router.delete('/:id', auth, review.delete)
+router.get('/movie/:id/:load', review.getAllReviewByMovie)
 router.get('/share/:id', review.getShareReviewOfUser)
 
 

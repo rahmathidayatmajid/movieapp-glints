@@ -5,9 +5,9 @@
     "main": "index.js",
     "scripts": {
         "dev": "nodemon run dev",
-        "start": "node index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "heroku-release": "node_modules/.bin/sequelize db:migrate && node_modules/.bin/sequelize db:seed:all"
+        "heroku-release": "node_modules/.bin/sequelize db:migrate && node_modules/.bin/sequelize db:seed:all",
+        "start": "node index.js"
     },
     "repository": {
         "type": "git",
