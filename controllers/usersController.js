@@ -23,7 +23,8 @@ module.exports = {
             if (error) {
                 return res.status(400).json({
                     status: "failed",
-                    message: "Please input username or password"
+                    message: "Please input username or password",
+                    error: error["details"][0]["message"]
                 })
             }
 
