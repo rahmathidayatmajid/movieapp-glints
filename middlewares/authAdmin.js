@@ -12,7 +12,7 @@ module.exports = async(req, res, next) => {
         const token = bearerToken.replace("Bearer ", "")
         const decode = jwt.verify(token, process.env.PWD_TOKEN)
         req.user = decode
-        const user = decode
+        const user = req.user
 
         try {
             if (!user) {
