@@ -2,11 +2,11 @@ const router = require('express').Router()
 const user = require('../controllers/usersController')
 const auth = require('../middlewares/auth')
 const authAdmin = require('../middlewares/authAdmin')
-const uploadProfile = require('../middlewares/uploadProfile')
+const upload = require('../middlewares/uploadCloudinary')
     //router
 router.post('/signin', user.signIn)
 router.post('/signup', user.signUp)
-router.put('/', auth, uploadProfile('profilePict'), user.editUserBasic)
+router.put('/', auth, upload('profilePict'), user.editUserBasic)
 router.put('/:id', auth, authAdmin, user.editUserByAdmin)
 router.get('/:id', auth, user.getOneUser)
 
