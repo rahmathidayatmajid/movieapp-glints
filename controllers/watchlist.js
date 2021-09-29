@@ -4,6 +4,7 @@ module.exports = {
     addWatchlist: async (req, res) => {
         const { id } = req.params;
         const userId = req.user.id;
+        console.log("🚀 ~ file: watchlist.js ~ line 7 ~ addWatchlist: ~ userId", userId)
         
         try {
             const check = await Watchlist.findOne({ 
@@ -38,8 +39,12 @@ module.exports = {
                 },
                 attributes: { exclude: ['createdAt', 'updatedAt', 'password'] },
                 include: {
-                    model: Movie,
-                    attributes: { exclude: ['createdAt', 'uodatedAt'] }
+                    model: Watchlist,
+                    attributes: ['movieId'],
+                    include: {
+                        model: Movie,
+                        attributes: { exclude: ['createdAt', 'uodatedAt'] }
+                    }
                 }
             });
 

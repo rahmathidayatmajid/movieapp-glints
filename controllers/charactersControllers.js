@@ -17,7 +17,7 @@ module.exports = {
 
             const actor = await Character.create({
                 name,
-                //profilePict: file.path
+                profilePict: file.path
             });
 
             if(!actor) {

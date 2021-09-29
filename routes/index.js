@@ -9,13 +9,13 @@ const review = require('./review')
 const watchlist = require('./watchlist')
     //router
 
-router.use('/user', user) 
+router.use('/users', user) 
 router.use('/movies', movies) 
 router.use('/categories', categories)
 router.use('/characters', characters)
 router.use('/movie-character', movie_character) 
 router.use('/movie-category', movie_category) 
-router.use('/review', review)
+router.use('/reviews', review)
 router.use('/watchlist', watchlist)
 
 

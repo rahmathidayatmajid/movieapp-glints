@@ -14,7 +14,7 @@ module.exports = {
             const schema = joi.object({
                 fullName: joi.string().required(),
                 email: joi.string().required(),
-                password: joi.string().required(),
+                password: joi.string().min(6).required(),
                 isAdmin: joi.string()
             })
 
@@ -228,7 +228,7 @@ module.exports = {
                 id: checkAdmin.dataValues.id
             }
 
-            jwt.sign(payload, process.env.PWD_TOKEN, { expiresIn: 3600 }, (err, token) => {
+            jwt.sign(payload, process.env.PWD_TOKEN, { expiresIn: 24 * 3600 }, (err, token) => {
                 return res.status(200).json({
                     status: "success",
                     message: "Success signin",

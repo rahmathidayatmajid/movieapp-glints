@@ -5,7 +5,7 @@ const authAdmin = require('../middlewares/authAdmin')
 
 router.post('/add', auth, authAdmin, categoryController.postGenre)
 router.get('/', categoryController.getGenre)
-router.get('/genre/:category', categoryController.getAllMovie)
+router.get('/:category', categoryController.getAllMovie)
 router.delete('/:id', auth, authAdmin, categoryController.deleteGenre)
 
 module.exports = router;
