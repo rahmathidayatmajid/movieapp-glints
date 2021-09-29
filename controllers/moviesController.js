@@ -95,14 +95,14 @@ module.exports = {
         }
     },
     getAllMovie: async(req, res) => {
-        const limit = 3;
+        const limit = 10;
         const page = req.params.page;
         const offset = limit * (page - 1);
         try {
             const movies = await Movie.findAll({
                 limit: limit,
                 offset: offset,
-                attributes: { exclude: ['createdAt', 'updatedAt', 'count'] },
+                attributes: { exclude: ['createdAt', 'updatedAt', 'synopsis', 'budget', 'featured_song', 'director'] },
                 include: [{
                     model: MovieCategory,
                     attributes: ['categoryId'],
@@ -249,6 +249,50 @@ module.exports = {
             })
         } catch (error) {
             console.log("🚀 ~ file: moviesController.js ~ line 222 ~ deleteMovie: ~ error", error)
+            res.status(500).json({
+                status: 'failed',
+                message: 'Internal server error'
+            })
+        }
+    },
+    getAllMovieByCategory: async(req, res) => {
+        const limit = 10;
+        const page = req.params.page;
+        const offset = limit * (page - 1);
+        const category = req.params.category
+        try {
+            const getMovie = await Movie.findAll({
+                include: {
+                    model: MovieCategory,
+                    attributes: ['categoryId'],
+                    include: {
+                        model: Category,
+                        where: {
+                            name: {
+                                [Op.iLike]: "%" + category + "%"
+                            }
+                        }
+                    }
+                },
+                limit: limit,
+                offset: offset
+            })
+
+            if (!getMovie) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "There no movie where category like that"
+                })
+            }
+
+            return res.status(200).json({
+                status: "success",
+                message: "success retrieved data",
+                data: getMovie
+            })
+
+        } catch (error) {
+
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'

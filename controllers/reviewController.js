@@ -218,7 +218,16 @@ module.exports = {
     getShareReviewOfUser: async(req, res) => {
         const id = req.params.id
         try {
-            const findReview = await Review.findAll({ where: { userId: id } })
+            const findReview = await Review.findAll({
+                where: {
+                    userId: id
+                },
+                attributes: ['rating', 'comment'],
+                include: {
+                    model: Movie,
+                    attributes: ['title', 'poster']
+                }
+            })
             if (!findReview) {
                 return res.status(400).json({
                     status: 'failed',

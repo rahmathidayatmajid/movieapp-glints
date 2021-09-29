@@ -77,55 +77,7 @@ module.exports = {
                 message: 'Internal server error'
             })
         }
-    },
-
-    getAllMovie: async(req, res) => {
-        const category = req.params.category
-        try {
-            // const getMovie = await Movie.findAll({
-            //     include: {
-            //         model: Category,
-            //         where: {
-            //             name: [{
-            //                 [Op.iLike]: "%" + category + "%"
-            //             }]
-            //         }
-            //     }
-            // })
-            const getMovie = await Movie.findAll({
-                include: {
-                    model: MovieCategory,
-                    attributes: ['categoryId'],
-                    include: {
-                        model: Category,
-                        where: {
-                            name: {
-                                [Op.iLike]: "%" + category + "%"
-                            }
-                        }
-                    }
-                }
-            })
-
-            if (!getMovie) {
-                return res.status(400).json({
-                    status: "failed",
-                    message: "There no movie where category like that"
-                })
-            }
-
-            return res.status(200).json({
-                status: "success",
-                message: "success retrieved data",
-                data: getMovie
-            })
-
-        } catch (error) {
-            console.log("🚀 ~ file: categoriesController.js ~ line 94 ~ getAllMovie: ~ error", error)
-            res.status(500).json({
-                status: 'failed',
-                message: 'Internal server error'
-            })
-        }
     }
+
+
 }

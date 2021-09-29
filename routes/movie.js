@@ -10,6 +10,7 @@ router.get('/page/:page', moviesController.getAllMovie)
 router.get('/:id', moviesController.getMovieById)
 router.put('/update/:id', auth, authAdmin, moviesController.updateMovie) //ok
 router.delete('/:id', auth, authAdmin, moviesController.deleteMovie) //ok
+router.get('/:category/page/:page', categoryController.getAllMovie)
 
 
 module.exports = router;
