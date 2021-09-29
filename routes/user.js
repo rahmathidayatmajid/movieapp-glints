@@ -6,7 +6,7 @@ const uploadProfile = require('../middlewares/uploadProfile')
     //router
 router.post('/signin', user.signIn)
 router.post('/signup', user.signUp)
-router.put('/:id', auth, uploadProfile('profilePict'), user.editUserBasic)
+router.put('/', auth, uploadProfile('profilePict'), user.editUserBasic)
 router.put('/:id', auth, authAdmin, user.editUserByAdmin)
 router.get('/:id', auth, user.getOneUser)
 
