@@ -23,7 +23,7 @@ module.exports = {
             if (error) {
                 return res.status(400).json({
                     status: "failed",
-                    message: "Please input username or password",
+                    message: "Please input email or password",
                     error: error["details"][0]["message"]
                 })
             }
@@ -149,7 +149,7 @@ module.exports = {
             const data = await User.findOne({
                 where: {
                     id: id
-                },
+                }, //exluide
                 include: [{
                     model: Review,
                     where: {
@@ -224,7 +224,7 @@ module.exports = {
                 id: checkAdmin.dataValues.id
             }
 
-            jwt.sign(payload, process.env.PWD_TOKEN, { expiresIn: 24 * 3600 }, (err, token) => {
+            jwt.sign(payload, process.env.PWD_TOKEN, { expiresIn: 3600 }, (err, token) => {
                 return res.status(200).json({
                     status: "success",
                     message: "Success signin",
