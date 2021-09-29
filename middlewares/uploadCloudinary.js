@@ -18,14 +18,28 @@ module.exports = (namaKolum) => {
     try {
         const storage = new CloudinaryStorage({
             cloudinary: cloudinary,
-            params: {
-                folder: "miniproject",
-                resources_type: "raw",
-                public_id: (req, file) => {
-                    return "image -" + new Date().getTime + path.extname(file.originalname)
+            params: (req, file) => {
+                return {
+                    folder: `coways/${file.fieldname}s`,
+                    resource_type: 'raw',
+                    public_id: path.parse(file.originalname).name +
+                        ' - ' +
+                        new Date().getFullYear() +
+                        '-' +
+                        new Date().getMonth() +
+                        '-' +
+                        new Date().getDate() +
+                        ' - ' +
+                        new Date().getHours() +
+                        '-' +
+                        new Date().getMinutes() +
+                        '-' +
+                        new Date().getSeconds() +
+                        '-' +
+                        new Date().getMilliseconds() +
+                        path.extname(file.originalname)
                 }
-
-            }
+            },
         })
 
         const upload = multer({
