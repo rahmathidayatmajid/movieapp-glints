@@ -19,8 +19,27 @@ module.exports = (namaKolum) => {
         const storage = new CloudinaryStorage({
             cloudinary: cloudinary,
             params: (req, file) => {
-                return []
-            }
+                return {
+                    folder: `movieapp/${file.fieldname}s`,
+                    resource_type: 'raw',
+                    public_id: path.parse(file.originalname).name +
+                        ' - ' +
+                        new Date().getFullYear() +
+                        '-' +
+                        new Date().getMonth() +
+                        '-' +
+                        new Date().getDate() +
+                        ' - ' +
+                        new Date().getHours() +
+                        '-' +
+                        new Date().getMinutes() +
+                        '-' +
+                        new Date().getSeconds() +
+                        '-' +
+                        new Date().getMilliseconds() +
+                        path.extname(file.originalname)
+                }
+            },
         })
 
         const upload = multer({

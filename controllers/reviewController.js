@@ -249,7 +249,7 @@ module.exports = {
         const user = req.user
         const id = req.params.id
         try {
-            const deleteReview = await Review.delete({
+            const deleteReview = await Review.destroy({
                 where: {
                     userId: user.id,
                     movieId: id
@@ -268,6 +268,7 @@ module.exports = {
             })
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 'failed',
                 message: "Internal Server Error"
