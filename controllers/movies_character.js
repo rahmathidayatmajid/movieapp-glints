@@ -1,7 +1,7 @@
 const { Character, Movie, MovieCharacter } = require('../models')
 
 module.exports = {
-    movieCharacter: async (req, res) => {
+    movieCharacter: async(req, res) => {
         const movieId = req.body.movieId;
         const characterId = req.body.characterId;
 
@@ -31,18 +31,14 @@ module.exports = {
             const response = await Movie.findOne({
                 where: { id: movieId },
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
-                include: [
-                    {
-                        model: MovieCharacter,
-                        attributes: { exclude: ['createdAt', 'updatedAt'] },
-                        include: [
-                            {
-                                model: Character,
-                                attributes: ['name']
-                            }
-                        ]
-                    }
-                ]
+                include: [{
+                    model: MovieCharacter,
+                    attributes: { exclude: ['createdAt', 'updatedAt'] },
+                    include: [{
+                        model: Character,
+                        attributes: ['name']
+                    }]
+                }]
             });
             res.status(200).json({
                 status: 'Success',
@@ -59,57 +55,35 @@ module.exports = {
         }
     },
 
-    removeCharacter: async (req, res) => {
-        const movieId = req.body.movieId;
-        const characterId = req.body.characterId;
+    removeCharacter: async(req, res) => {
+        const id = req.params.id
 
         try {
-           const check = await MovieCharacter.findOne({
-               where: { movieId, characterId }
-           });
-           
-           if(!check) {
-               return res.status(400).json({
-                   status: 'failed',
-                   message: 'Not added to character movie yet'
-               });
-           }
+            const check = await MovieCharacter.findOne({
+                where: { id }
+            });
 
-           const movieCharacter = await MovieCharacter.destroy({
-               where: { movieId, characterId }
-           });
+            if (!check) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'Not added to character movie yet'
+                });
+            }
 
-           if (!movieCharacter) {
-               return res.status(400).json({
-                   status: 'failed',
-                   message: 'Failed to remove character movie, please try'
-               });
-           }
+            const movieCharacter = await MovieCharacter.destroy({
+                where: { id }
+            });
 
-           const response = await Movie.findOne({
-               where: { id: movieId },
-               attributes: { exclude: ['createdAt', 'updatedAt'] },
-               include: [
-                   {
-                       model: MovieCharacter,
-                       attributes: { exclude: ['createdAt', 'updatedAt'] },
-                       include: [
-                           {
-                               model: Character,
-                               attributes: ['name']
-                           }
-                       ]
-                   }
-               ]
-           });
-
-           res.status(200).json({
-               status: 'Success',
-               message: 'Removed Successfully',
-               data: {
-                   movie: response
-               }
-           });
+            if (!movieCharacter) {
+                return res.status(400).json({
+                    status: 'failed',
+                    message: 'Failed to remove character movie, please try'
+                });
+            }
+            res.status(200).json({
+                status: 'Success',
+                message: 'Removed Successfully',
+            });
         } catch (error) {
             res.status(500).json({
                 status: 'failed',

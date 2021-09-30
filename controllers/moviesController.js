@@ -164,7 +164,11 @@ module.exports = {
 
     updateMovie: async(req, res) => {
         const { id } = req.params;
+<<<<<<< HEAD
         console.log("🚀 ~ file: moviesController.js ~ line 168 ~ updateMovie:async ~ req.file", req.file)
+=======
+        console.log(req.file, "test")
+>>>>>>> cfb7b65b6cd81d8cc70c6ebcfa7048e9faa697a3
         const poster = req.file.path;
         const { title, synopsis, release_date, budget, director, featured_song, trailer } = req.body
 

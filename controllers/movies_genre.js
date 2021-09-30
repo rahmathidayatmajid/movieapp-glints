@@ -1,7 +1,7 @@
 const { Category, Movie, MovieCategory } = require('../models')
 
 module.exports = {
-    movieCategory: async (req, res) => {
+    movieCategory: async(req, res) => {
         const movieId = req.body.movieId;
         const categoryId = req.body.categoryId;
 
@@ -18,7 +18,7 @@ module.exports = {
             const movieCategory = await MovieCategory.create({
                 movieId: movieId,
                 categoryId: categoryId
-            });            
+            });
 
             if (!movieCategory) {
                 return res.status(400).json({
@@ -28,22 +28,18 @@ module.exports = {
             }
 
             const response = await Movie.findOne({
-                where : { id: movieId },
+                where: { id: movieId },
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
-                include: [
-                    {
-                        model: MovieCategory,
-                        attributes: { exclude: ['createdAt', 'updatedAt'] },
-                        include: [
-                            {
-                                model: Category,
-                                attributes: ['name']
-                            }
-                        ]
-                    }
-                ]
+                include: [{
+                    model: MovieCategory,
+                    attributes: { exclude: ['createdAt', 'updatedAt'] },
+                    include: [{
+                        model: Category,
+                        attributes: ['name']
+                    }]
+                }]
             });
-            
+
             res.status(200).json({
                 status: 'Success',
                 message: 'Added successfully',
@@ -59,18 +55,17 @@ module.exports = {
         }
     },
 
-    removeCategory: async (req, res) => {
-        const movieId = req.body.movieId;
-        const categoryId = req.body.categoryId;
+    removeCategory: async(req, res) => {
+        const id = req.params.id
 
         try {
-            const check = await MovieCategory.findOne({ 
+            const check = await MovieCategory.findOne({
                 where: {
-                    movieId, categoryId
+                    id
                 }
             });
 
-            if(!check) {
+            if (!check) {
                 return res.status(400).json({
                     status: 'failed',
                     message: 'Not added to category movie yet'
@@ -78,7 +73,7 @@ module.exports = {
             }
 
             const movieCategory = await MovieCategory.destroy({
-                where: { movieId, categoryId}
+                where: { id }
             });
 
             if (!movieCategory) {
@@ -88,28 +83,9 @@ module.exports = {
                 });
             }
 
-            const response = await Movie.findOne({
-                where : { id: movieId },
-                attributes: { exclude: ['createdAt', 'updatedAt'] },
-                include: [
-                    {
-                        model: MovieCategory,
-                        attributes: { exclude: ['createdAt', 'updatedAt'] },
-                        include: [
-                            {
-                                model: Category,
-                                attributes: ['name']
-                            }
-                        ]
-                    }
-                ]
-            });
             res.status(200).json({
                 status: 'Success',
                 message: 'Removed successfully',
-                data: {
-                    movie: response
-                }
             })
         } catch (error) {
             res.status(500).json({
