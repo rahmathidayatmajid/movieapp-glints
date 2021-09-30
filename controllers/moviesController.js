@@ -164,6 +164,7 @@ module.exports = {
 
     updateMovie: async(req, res) => {
         const { id } = req.params;
+        console.log("🚀 ~ file: moviesController.js ~ line 168 ~ updateMovie:async ~ req.file", req.file)
         const poster = req.file.path;
         const { title, synopsis, release_date, budget, director, featured_song, trailer } = req.body
 
@@ -210,6 +211,7 @@ module.exports = {
                 data: response
             })
         } catch (error) {
+            console.log("🚀 ~ file: moviesController.js ~ line 214 ~ updateMovie:async ~ error", error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
