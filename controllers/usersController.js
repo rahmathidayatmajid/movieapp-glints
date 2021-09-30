@@ -239,7 +239,7 @@ module.exports = {
         }
     },
 
-    getUserLogin: async(req, res) => {
+    userLogin: async(req, res) => {
         const { id } = req.user
 
         try {
