@@ -6,10 +6,10 @@ const upload = require('../middlewares/uploadCloudinary')
     //router
 router.post('/signin', user.signIn)
 router.post('/signup', user.signUp)
-router.put('/', auth, upload('profilePict'), user.editUserBasic)
-router.put('/:id', auth, authAdmin, user.editUserByAdmin)
-router.get('/:id', auth, user.getOneUser)
-router.get('/me', auth, user.getUserLogin)
+router.put('/edit/me', auth, upload('profilePict'), user.editUserBasic)
+router.put('/edit/user/:id', auth, authAdmin, user.editUserByAdmin)
+router.get('/getuser/:id', auth, user.getOneUser)
+router.get('/profile', auth, user.getUserLogin)
 
 
 

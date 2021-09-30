@@ -1,8 +1,8 @@
-const { User } = require('../models')
+const { User, Review } = require('../models')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const joi = require('joi')
-const Review = require('../models')
+
 
 
 require('dotenv').config()
@@ -240,23 +240,21 @@ module.exports = {
     },
 
     getUserLogin: async(req, res) => {
-        const { id } = req.user
-
+        const user = req.user
         try {
             const userLogin = await User.findOne({
                 where: {
-                    id: id
+                    id: user.id
                 },
                 attributes: ['fullName', 'email', 'profilePict'],
                 include: [{
                     model: Review,
                     where: {
-                        userId: id
+                        userId: user.id
                     },
                     attributes: ["rating", "comment"]
                 }]
             })
-
             if (!userLogin) {
                 return res.status(400).json({
                     status: "failed",
@@ -270,6 +268,7 @@ module.exports = {
                 data: userLogin
             })
         } catch (error) {
+            console.log(error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
