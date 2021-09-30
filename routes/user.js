@@ -9,6 +9,7 @@ router.post('/signup', user.signUp)
 router.put('/', auth, upload('profilePict'), user.editUserBasic)
 router.put('/:id', auth, authAdmin, user.editUserByAdmin)
 router.get('/:id', auth, user.getOneUser)
+router.get('/me', auth, user.getUserLogin)
 
 
 
