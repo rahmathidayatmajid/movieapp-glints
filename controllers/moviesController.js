@@ -275,7 +275,7 @@ module.exports = {
                 offset: offset
             })
 
-            if (!getMovie) {
+            if (getMovie.length == 0) {
                 return res.status(400).json({
                     status: "failed",
                     message: "There no movie where category like that"
