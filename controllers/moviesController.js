@@ -1,4 +1,5 @@
-const { Movie, Character, MovieCharacter, Review, User, MovieCategory, Category } = require('../models'), { Op } = require('sequelize')
+const { Movie, Character, MovieCharacter, Review, User, MovieCategory, Category } = require('../models'), { Op } = require('sequelize');
+const { get } = require('../routes/watchlist');
 
 module.exports = {
     postMovie: async(req, res) => {
@@ -93,8 +94,9 @@ module.exports = {
     },
     getAllMovie: async(req, res) => {
         const limit = 10;
-        const page = req.params.page;
+        const page = parseInt(req.params.page);
         const offset = limit * (page - 1);
+
         try {
             const movies = await Movie.findAll({
                 limit: limit,
@@ -112,12 +114,27 @@ module.exports = {
                     ['id', 'ASC']
                 ]
             });
+            const count = await Movie.count({ distinct: true })
+            let next = page + 1
+            if (page * limit >= count) {
+                next = 0
+            }
+            let previous = 0
+            if (page > 1) {
+                previous = page - 1
+            }
+            let total = Math.ceil(count / limit)
+
             res.status(200).json({
                 status: 'Success',
                 message: 'Movies loaded successfully',
                 data: {
                     movies
-                }
+                },
+                currentPage: page,
+                previousPage: previous,
+                nextPage: next,
+                totalPage: total
             });
         } catch (error) {
             res.status(500).json({
@@ -254,7 +271,7 @@ module.exports = {
     },
     getAllMovieByCategory: async(req, res) => {
         const limit = 10;
-        const page = req.params.page;
+        const page = parseInt(req.params.page);
         const offset = limit * (page - 1);
         const category = req.params.category
         try {
@@ -275,6 +292,7 @@ module.exports = {
                 offset: offset
             })
 
+
             if (getMovie.length == 0) {
                 return res.status(400).json({
                     status: "failed",
@@ -285,11 +303,11 @@ module.exports = {
             return res.status(200).json({
                 status: "success",
                 message: "success retrieved data",
-                data: getMovie
+                data: getMovie,
             })
 
         } catch (error) {
-
+            console.log(error)
             res.status(500).json({
                 status: 'failed',
                 message: 'Internal server error'
