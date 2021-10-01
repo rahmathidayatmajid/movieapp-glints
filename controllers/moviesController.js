@@ -42,6 +42,7 @@ module.exports = {
                 data: movies
             })
         } catch (error) {
+            console.log("🚀 ~ file: moviesController.js ~ line 45 ~ postMovie:async ~ error", error)
             res.status(500).json({
                 status: 'error',
                 message: 'Internal Server Error'

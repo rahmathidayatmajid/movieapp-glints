@@ -10,9 +10,17 @@ module.exports = async(req, res, next) => {
     const bearerToken = req.header('Authorization')
     try {
         const token = bearerToken.replace("Bearer ", "")
-        const decode = jwt.verify(token, process.env.PWD_TOKEN)
-        req.user = decode
-        next()
+        jwt.verify(token, process.env.PWD_TOKEN, (err, res) => {
+            if (err) {
+                return res.status(401).json({
+                    status: "failed",
+                    message: "Unauthorized"
+                })
+            }
+            req.user = res
+            next()
+        })
+
     } catch (error) {
         res.status(401).json({
             status: "failed",
