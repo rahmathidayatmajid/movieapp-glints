@@ -99,13 +99,13 @@ module.exports = {
             const movies = await Movie.findAll({
                 limit: limit,
                 offset: offset,
-                attributes: ['poster', 'title'],
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
                 include: [{
                     model: MovieCategory,
                     attributes: ['categoryId'],
                     include: {
                         model: Category,
-                        attributes: ['name']
+                        attributes: ['id', 'name']
                     }
                 }],
                 order: [
@@ -165,7 +165,7 @@ module.exports = {
 
     updateMovie: async(req, res) => {
         const { id } = req.params;
-        const poster = req.file.path;
+        const poster = req.file ? req.file.path : req.body.poster
         const { title, synopsis, release_date, budget, director, featured_song, trailer } = req.body
 
         try {
@@ -275,7 +275,7 @@ module.exports = {
                 offset: offset
             })
 
-            if (!getMovie) {
+            if (getMovie.length == 0) {
                 return res.status(400).json({
                     status: "failed",
                     message: "There no movie where category like that"

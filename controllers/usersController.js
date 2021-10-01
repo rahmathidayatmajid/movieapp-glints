@@ -60,7 +60,7 @@ module.exports = {
     editUserBasic: async(req, res) => {
         const body = req.body
         const user = req.user
-        const file = req.file
+        const profilePict = req.file ? req.file.path : body.profilePict
         try {
             const findUser = await User.findOne({ where: { id: user.id } })
             if (!findUser) {
@@ -73,7 +73,7 @@ module.exports = {
                 email: body.email,
                 password: body.password,
                 fullName: body.fullName,
-                profilePict: file.path,
+                profilePict: profilePict,
                 isAdmin: false
             }, {
                 where: {
