@@ -98,7 +98,7 @@ module.exports = {
             const movies = await Movie.findAll({
                 limit: limit,
                 offset: offset,
-                attributes: ['poster', 'title'],
+                attributes: ['id', 'poster', 'title'],
                 include: [{
                     model: MovieCategory,
                     attributes: ['categoryId'],
