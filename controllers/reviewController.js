@@ -174,11 +174,16 @@ module.exports = {
                         message: "there's no review yet in this movie"
                     })
                 }
-
+                const count = await Review.count({
+                    where: {
+                        movieId: id
+                    }
+                })
                 return res.status(200).json({
                     status: "success",
                     message: "success retrieved data",
-                    data: findReview
+                    data: findReview,
+                    totalReview: count
                 })
             } else {
                 const findReview = await Review.findAll({
@@ -197,11 +202,17 @@ module.exports = {
                         message: "there's no review yet in this movie"
                     })
                 }
+                const count = await Review.count({
+                    where: {
+                        movieId: id
+                    }
+                })
 
                 return res.status(200).json({
                     status: "success",
                     message: "success retrieved data",
-                    data: findReview
+                    data: findReview,
+                    totalReview: count
                 })
             }
 
