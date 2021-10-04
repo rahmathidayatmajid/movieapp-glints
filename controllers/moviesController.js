@@ -155,7 +155,7 @@ module.exports = {
                     attributes: ['characterId'],
                     include: {
                         model: Character,
-                        attributes: ['name']
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }
                     }
                 }
             });
