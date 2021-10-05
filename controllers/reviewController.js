@@ -162,7 +162,7 @@ module.exports = {
                     },
                     include: {
                         model: User,
-                        attributes: ['fullName', 'profilePict']
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }
                     },
                     limit: limit,
                     offset: 0
@@ -192,7 +192,7 @@ module.exports = {
                     },
                     include: {
                         model: User,
-                        attributes: ['fullName', 'profilePict']
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }
                     }
                 })
 
@@ -230,10 +230,10 @@ module.exports = {
                 where: {
                     userId: id
                 },
-                attributes: ['rating', 'comment'],
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
                 include: {
                     model: Movie,
-                    attributes: ['title', 'poster']
+                    attributes: { exclude: ['createdAt', 'updatedAt'] }
                 }
             })
             if (!findReview) {
