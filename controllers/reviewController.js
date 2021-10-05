@@ -162,7 +162,7 @@ module.exports = {
                     },
                     include: {
                         model: User,
-                        attributes: { exclude: ['createdAt', 'updatedAt'] }
+                        attributes: { exclude: ['createdAt', 'updatedAt', 'password', 'isAdmin'] }
                     },
                     limit: limit,
                     offset: 0
@@ -192,7 +192,7 @@ module.exports = {
                     },
                     include: {
                         model: User,
-                        attributes: { exclude: ['createdAt', 'updatedAt'] }
+                        attributes: { exclude: ['createdAt', 'updatedAt', 'password', 'isAdmin'] }
                     }
                 })
 

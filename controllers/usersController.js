@@ -149,7 +149,7 @@ module.exports = {
                 where: {
                     id: id
                 },
-                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                attributes: { exclude: ['createdAt', 'updatedAt', 'password', 'isAdmin'] },
                 include: [{
                     model: Review,
                     where: {
@@ -246,7 +246,7 @@ module.exports = {
                 where: {
                     id: user.id
                 },
-                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                attributes: { exclude: ['createdAt', 'updatedAt', 'password', 'isAdmin'] },
                 include: [{
                     model: Review,
                     where: {
